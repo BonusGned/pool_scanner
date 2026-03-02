@@ -1,0 +1,23 @@
+[package]
+name = "pool_scanner"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alloy = { version = "1.7", features = [
+    "provider-http",
+    "provider-ws",
+    "signers",
+    "signer-local",
+    "sol-types",
+    "contract",
+    "rpc-types",
+    "network",
+    "consensus",
+] }
+tokio = { version = "1", features = ["full"] }
+eyre = "0.6"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+futures = "0.3"
+url = "2"
