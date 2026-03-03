@@ -1,0 +1,74 @@
+[[pools]]
+pair = "0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852"
+dex = "UniswapV2"
+pool_type = "v2"
+
+[[pools]]
+pair = "0x11b815efb8f581194ae79006d24e0d814b7697f6"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[[pools]]
+pair = "0x3041cbd36888becc7bbcbc0045e3b1f144466f5f"
+dex = "UniswapV2"
+pool_type = "v2"
+
+[[pools]]
+pair = "0x3416cf6c708da44db2624d63ea0aaef7113527c6"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 100
+
+[[pools]]
+pair = "0x4e68ccd3e89f51c3074ca5072bbac773960dfa36"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[[pools]]
+pair = "0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[[pools]]
+pair = "0x7bea39867e4169dbe237d55c8242a8f2fcdcc387"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 10000
+
+[[pools]]
+pair = "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[[pools]]
+pair = "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[[pools]]
+pair = "0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"
+dex = "UniswapV2"
+pool_type = "v2"
+
+[[pools]]
+pair = "0xc5af84701f98fa483ece78af83f11b6c38aca71d"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 10000
+
+[[pools]]
+pair = "0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 100
+
+[[pools]]
+pair = "0xe0554a476a092703abdb3ef35c80e0d76d32939f"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 100

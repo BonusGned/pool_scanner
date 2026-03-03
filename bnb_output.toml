@@ -1,0 +1,78 @@
+[[pools]]
+pair = "0x1483767e665b3591677fd49f724bf7430c18bf83"
+dex = "biswap"
+pool_type = "v2"
+
+[[pools]]
+pair = "0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[[pools]]
+pair = "0x172fcd41e0913e95784454622d1c3724f546f849"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[[pools]]
+pair = "0x2c3c320d49019d4f9a92352e947c7e5acfe47d68"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 100
+
+[[pools]]
+pair = "0x36696169c63e42cd08ce11f5deebbcebae652050"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[[pools]]
+pair = "0x47a90a2d92a8367a91efa1906bfc8c1e05bf10c4"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 100
+
+[[pools]]
+pair = "0x4f31fa980a675570939b737ebdde0471a4be40eb"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[[pools]]
+pair = "0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[[pools]]
+pair = "0x7862d9b4be2156b15d54f41ee4ede2d5b0b455e4"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[[pools]]
+pair = "0x8840c6252e2e86e545defb6da98b2a0e26d8c1ba"
+dex = "biswap"
+pool_type = "v2"
+
+[[pools]]
+pair = "0x92b7807bf19b7dddf89b706143896d05228f3121"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[[pools]]
+pair = "0xd99c7f6c65857ac913a8f880a4cb84032ab2fc5b"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[[pools]]
+pair = "0xec6557348085aa57c72514d67070dc863c0a5a8c"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[[pools]]
+pair = "0xf2688fb5b81049dfb7703ada5e770543770612c4"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100

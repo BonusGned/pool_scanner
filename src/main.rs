@@ -80,7 +80,7 @@ pub struct Output {
 async fn main() -> eyre::Result<()> {
     let network = env::var("NETWORK").unwrap_or_else(|_| "eth".to_string());
     let config_path = format!("config/{}.toml", network);
-    
+
     // Fallback if running from the root of the workspace
     let config_path = if Path::new(&config_path).exists() {
         config_path
@@ -104,6 +104,20 @@ async fn main() -> eyre::Result<()> {
         std::pin::Pin<Box<dyn std::future::Future<Output = (Address, PoolMeta)>>>,
     > = Vec::new();
 
+    let mut pairs_to_check = Vec::new();
+    // 1. Stable vs Other
+    for &stable in &config.stables {
+        for &other in &config.other_tokens {
+            pairs_to_check.push((stable, other));
+        }
+    }
+    // 2. Stable vs Stable
+    for i in 0..config.stables.len() {
+        for j in (i + 1)..config.stables.len() {
+            pairs_to_check.push((config.stables[i], config.stables[j]));
+        }
+    }
+
     // Build calls
     for factory in &config.factories {
         match factory.factory_type {
@@ -124,43 +138,41 @@ async fn main() -> eyre::Result<()> {
                 }
             }
             PoolTypeConfig::V2 => {
-                for &stable in &config.stables {
-                    for &other in &config.other_tokens {
-                        let meta = (factory.name.clone(), PoolTypeConfig::V2, None);
+                for &(t0, t1) in &pairs_to_check {
+                    let meta = (factory.name.clone(), PoolTypeConfig::V2, None);
+                    let provider = provider.clone();
+                    let factory_address = factory.address;
+                    pool_futures.push(Box::pin(async move {
+                        let univ2 = IUniswapV2Factory::new(factory_address, provider);
+                        let pool_addr = match univ2.getPair(t0, t1).call().await {
+                            Ok(r) => r,
+                            Err(e) => {
+                                eprintln!("V2 Error for {} / {}: {:?}", t0, t1, e);
+                                Address::ZERO
+                            }
+                        };
+                        (pool_addr, meta)
+                    })
+                        as std::pin::Pin<Box<dyn std::future::Future<Output = _>>>);
+                }
+            }
+            PoolTypeConfig::V3 => {
+                let v3_fees = vec![100u32, 500u32, 3000u32, 10000u32];
+                for &(t0, t1) in &pairs_to_check {
+                    for &fee in &v3_fees {
+                        let meta = (factory.name.clone(), PoolTypeConfig::V3, Some(fee));
+                        let fee_uint = alloy::primitives::Uint::<24, 1>::from(fee);
                         let provider = provider.clone();
                         let factory_address = factory.address;
                         pool_futures.push(Box::pin(async move {
-                            let univ2 = IUniswapV2Factory::new(factory_address, provider);
-                            let pool_addr = match univ2.getPair(stable, other).call().await {
+                            let univ3 = IUniswapV3Factory::new(factory_address, provider);
+                            let pool_addr = match univ3.getPool(t0, t1, fee_uint).call().await {
                                 Ok(r) => r,
                                 Err(_) => Address::ZERO,
                             };
                             (pool_addr, meta)
                         })
                             as std::pin::Pin<Box<dyn std::future::Future<Output = _>>>);
-                    }
-                }
-            }
-            PoolTypeConfig::V3 => {
-                let v3_fees = vec![100u32, 500u32, 3000u32, 10000u32];
-                for &stable in &config.stables {
-                    for &other in &config.other_tokens {
-                        for &fee in &v3_fees {
-                            let meta = (factory.name.clone(), PoolTypeConfig::V3, Some(fee));
-                            let fee_uint = alloy::primitives::Uint::<24, 1>::from(fee);
-                            let provider = provider.clone();
-                            let factory_address = factory.address;
-                            pool_futures.push(Box::pin(async move {
-                                let univ3 = IUniswapV3Factory::new(factory_address, provider);
-                                let pool_addr =
-                                    match univ3.getPool(stable, other, fee_uint).call().await {
-                                        Ok(r) => r,
-                                        Err(_) => Address::ZERO,
-                                    };
-                                (pool_addr, meta)
-                            })
-                                as std::pin::Pin<Box<dyn std::future::Future<Output = _>>>);
-                        }
                     }
                 }
             }
@@ -237,7 +249,13 @@ async fn main() -> eyre::Result<()> {
 
     let output = Output { pools: valid_pools };
     let toml_string = toml::to_string_pretty(&output)?;
-    println!("{}", toml_string);
+
+    // Создаем output файл вместо вывода в консоль
+    let output_filename = format!("{}_output.toml", network);
+    fs::write(&output_filename, &toml_string)?;
+
+    println!("Results written to {}", output_filename);
+    println!("Found {} pools", output.pools.len());
 
     Ok(())
 }
