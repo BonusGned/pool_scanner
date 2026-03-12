@@ -1,18 +1,13 @@
-use alloy::primitives::U256;
+use alloy::primitives::{Address, U256};
 use alloy::providers::layers::CallBatchLayer;
 use alloy::providers::ProviderBuilder;
 use alloy::sol;
-use pool_scanner::{
-    deduplicate_pools, get_min_liquidity, Output, PoolConfig, PoolTypeConfig, ScannerConfig,
-};
+use pool_scanner::{deduplicate_pools, Output, PoolConfig, PoolTypeConfig, ScannerConfig};
 use std::env;
 use std::fs;
 use std::path::Path;
 use std::time::Duration;
 use url::Url;
-
-// Re-import types from library for local use
-use alloy::primitives::Address;
 
 sol! {
     #[sol(rpc)]
@@ -42,7 +37,6 @@ async fn main() -> eyre::Result<()> {
     let network = env::var("NETWORK").unwrap_or_else(|_| "eth".to_string());
     let config_path = format!("config/{}.toml", network);
 
-    // Fallback if running from the root of the workspace
     let config_path = if Path::new(&config_path).exists() {
         config_path
     } else {
@@ -54,12 +48,10 @@ async fn main() -> eyre::Result<()> {
     let config: ScannerConfig = toml::from_str(&config_content)?;
 
     eprintln!("Config path: {}", config_path);
-    eprintln!("RPC URL from config: '{}'", config.rpc_url);
-    eprintln!("RPC URL bytes: {:?}", config.rpc_url.as_bytes());
-    
+    eprintln!("Tokens: {}", config.tokens.len());
+
     let url: Url = config.rpc_url.parse()?;
 
-    // Setup provider with CallBatchLayer
     let provider = ProviderBuilder::new()
         .layer(CallBatchLayer::new().wait(Duration::from_millis(10)))
         .connect_http(url);
@@ -69,20 +61,19 @@ async fn main() -> eyre::Result<()> {
         std::pin::Pin<Box<dyn std::future::Future<Output = (Address, PoolMetaTuple)>>>,
     > = Vec::new();
 
-    // Generate pairs using library function
-    let pairs_to_check = pool_scanner::generate_pairs(&config.stables, &config.other_tokens);
+    let pairs_to_check = pool_scanner::generate_pairs(&config.tokens);
+    let all_addresses: Vec<Address> = config.tokens.iter().map(|t| t.address).collect();
 
-    // Build calls
     for factory in &config.factories {
         match factory.factory_type {
             PoolTypeConfig::V1 => {
-                for &other in &config.other_tokens {
+                for &token_addr in &all_addresses {
                     let meta = (factory.name.clone(), PoolTypeConfig::V1, None);
                     let provider = provider.clone();
                     let factory_address = factory.address;
                     pool_futures.push(Box::pin(async move {
                         let univ1 = IUniswapV1Factory::new(factory_address, provider);
-                        let pool_addr = match univ1.getExchange(other).call().await {
+                        let pool_addr = match univ1.getExchange(token_addr).call().await {
                             Ok(r) => r,
                             Err(_) => Address::ZERO,
                         };
@@ -130,13 +121,10 @@ async fn main() -> eyre::Result<()> {
                     }
                 }
             }
-            PoolTypeConfig::V4 => {
-                // Placeholder
-            }
+            PoolTypeConfig::V4 => {}
         }
     }
 
-    // Execute batch for pool addresses
     let results = futures::future::join_all(pool_futures).await;
 
     let mut pool_addresses = Vec::new();
@@ -146,56 +134,52 @@ async fn main() -> eyre::Result<()> {
         }
     }
 
-    // Now build batch for stablecoin balances
+    let liq_tokens = pool_scanner::liquidity_tokens(&config.tokens);
+
+    // (balance, min_liquidity, pool_addr, meta)
     let mut balance_futures: Vec<
-        std::pin::Pin<Box<dyn std::future::Future<Output = (U256, Address, PoolMetaTuple)>>>,
+        std::pin::Pin<Box<dyn std::future::Future<Output = (U256, U256, Address, PoolMetaTuple)>>>,
     > = Vec::new();
 
     for (pool_addr, meta) in &pool_addresses {
-        for &stable in &config.stables {
+        for &(token_addr, min_liq) in &liq_tokens {
             let pool_addr_clone = *pool_addr;
             let meta_clone = meta.clone();
             let provider = provider.clone();
 
             balance_futures.push(Box::pin(async move {
-                let erc20 = ERC20::new(stable, provider);
+                let erc20 = ERC20::new(token_addr, provider);
                 let balance = match erc20.balanceOf(pool_addr_clone).call().await {
                     Ok(r) => r,
                     Err(_) => U256::ZERO,
                 };
-                (balance, pool_addr_clone, meta_clone)
+                (balance, min_liq, pool_addr_clone, meta_clone)
             })
                 as std::pin::Pin<Box<dyn std::future::Future<Output = _>>>);
         }
     }
 
-    // Execute batch for balances
     let balance_results = futures::future::join_all(balance_futures).await;
 
     let mut valid_pools = Vec::new();
-    let min_balance = get_min_liquidity(&network);
-
-    for (balance, pool_addr, meta) in balance_results {
-        if balance > min_balance {
-            let config = PoolConfig {
+    for (balance, min_liq, pool_addr, meta) in balance_results {
+        if balance > min_liq {
+            valid_pools.push(PoolConfig {
                 pair: pool_addr,
                 dex: meta.0,
                 pool_type: meta.1,
                 fee_numerator: None,
                 fee_denominator: None,
                 fee: meta.2,
-            };
-            valid_pools.push(config);
+            });
         }
     }
 
-    // Deduplicate pools
     let final_pools = deduplicate_pools(valid_pools);
 
     let output = Output { pools: final_pools };
     let toml_string = toml::to_string_pretty(&output)?;
 
-    // Create output file instead of console output
     let output_filename = format!("{}_output.toml", network);
     fs::write(&output_filename, &toml_string)?;
 
