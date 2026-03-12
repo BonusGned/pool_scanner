@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  # Run all tests
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
+      - name: Run tests
+        run: cargo test --all-features --verbose
+
+  # Lint with Clippy
+  lint:
+    name: Clippy Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          components: clippy
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
+      - name: Run Clippy
+        run: cargo clippy --all-features --all-targets -- -D warnings
+
+  # Check code formatting
+  format:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo fmt --all --check
+
+  # Build in release mode
+  build:
+    name: Build Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
+      - name: Build release
+        run: cargo build --release --verbose
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pool-scanner-${{ runner.os }}
+          path: target/release/pool_scanner
+          if-no-files-found: error
+
+  # Verify documentation builds
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
+      - name: Check documentation
+        run: cargo doc --all-features --no-deps --document-private-items
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+
+  # Security audit
+  audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+
+      - name: Run security audit
+        run: cargo audit --deny warnings

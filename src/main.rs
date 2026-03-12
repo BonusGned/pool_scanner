@@ -1,13 +1,18 @@
-use alloy::primitives::{Address, U256};
+use alloy::primitives::U256;
 use alloy::providers::layers::CallBatchLayer;
 use alloy::providers::ProviderBuilder;
 use alloy::sol;
-use serde::{Deserialize, Serialize};
+use pool_scanner::{
+    deduplicate_pools, get_min_liquidity, Output, PoolConfig, PoolTypeConfig, ScannerConfig,
+};
 use std::env;
 use std::fs;
 use std::path::Path;
 use std::time::Duration;
 use url::Url;
+
+// Re-import types from library for local use
+use alloy::primitives::Address;
 
 sol! {
     #[sol(rpc)]
@@ -32,50 +37,6 @@ sol! {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum PoolTypeConfig {
-    V1,
-    V2,
-    V3,
-    V4,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FactoryConfig {
-    pub name: String,
-    pub address: Address,
-    #[serde(rename = "type")]
-    pub factory_type: PoolTypeConfig,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ScannerConfig {
-    pub rpc_url: String,
-    pub multicall3_address: Address,
-    pub stables: Vec<Address>,
-    pub other_tokens: Vec<Address>,
-    pub factories: Vec<FactoryConfig>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub struct PoolConfig {
-    pub pair: Address,
-    pub dex: String,
-    pub pool_type: PoolTypeConfig,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fee_numerator: Option<u64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fee_denominator: Option<u64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fee: Option<u32>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub struct Output {
-    pub pools: Vec<PoolConfig>,
-}
-
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     let network = env::var("NETWORK").unwrap_or_else(|_| "eth".to_string());
@@ -92,6 +53,10 @@ async fn main() -> eyre::Result<()> {
         .unwrap_or_else(|_| panic!("Failed to read config file at {}", config_path));
     let config: ScannerConfig = toml::from_str(&config_content)?;
 
+    eprintln!("Config path: {}", config_path);
+    eprintln!("RPC URL from config: '{}'", config.rpc_url);
+    eprintln!("RPC URL bytes: {:?}", config.rpc_url.as_bytes());
+    
     let url: Url = config.rpc_url.parse()?;
 
     // Setup provider with CallBatchLayer
@@ -99,24 +64,13 @@ async fn main() -> eyre::Result<()> {
         .layer(CallBatchLayer::new().wait(Duration::from_millis(10)))
         .connect_http(url);
 
-    type PoolMeta = (String, PoolTypeConfig, Option<u32>);
+    type PoolMetaTuple = (String, PoolTypeConfig, Option<u32>);
     let mut pool_futures: Vec<
-        std::pin::Pin<Box<dyn std::future::Future<Output = (Address, PoolMeta)>>>,
+        std::pin::Pin<Box<dyn std::future::Future<Output = (Address, PoolMetaTuple)>>>,
     > = Vec::new();
 
-    let mut pairs_to_check = Vec::new();
-    // 1. Stable vs Other
-    for &stable in &config.stables {
-        for &other in &config.other_tokens {
-            pairs_to_check.push((stable, other));
-        }
-    }
-    // 2. Stable vs Stable
-    for i in 0..config.stables.len() {
-        for j in (i + 1)..config.stables.len() {
-            pairs_to_check.push((config.stables[i], config.stables[j]));
-        }
-    }
+    // Generate pairs using library function
+    let pairs_to_check = pool_scanner::generate_pairs(&config.stables, &config.other_tokens);
 
     // Build calls
     for factory in &config.factories {
@@ -157,7 +111,7 @@ async fn main() -> eyre::Result<()> {
                 }
             }
             PoolTypeConfig::V3 => {
-                let v3_fees = vec![100u32, 500u32, 3000u32, 10000u32];
+                let v3_fees = vec![100u32, 500u32, 2500u32, 3000u32, 10000u32];
                 for &(t0, t1) in &pairs_to_check {
                     for &fee in &v3_fees {
                         let meta = (factory.name.clone(), PoolTypeConfig::V3, Some(fee));
@@ -194,7 +148,7 @@ async fn main() -> eyre::Result<()> {
 
     // Now build batch for stablecoin balances
     let mut balance_futures: Vec<
-        std::pin::Pin<Box<dyn std::future::Future<Output = (U256, Address, PoolMeta)>>>,
+        std::pin::Pin<Box<dyn std::future::Future<Output = (U256, Address, PoolMetaTuple)>>>,
     > = Vec::new();
 
     for (pool_addr, meta) in &pool_addresses {
@@ -219,17 +173,9 @@ async fn main() -> eyre::Result<()> {
     let balance_results = futures::future::join_all(balance_futures).await;
 
     let mut valid_pools = Vec::new();
+    let min_balance = get_min_liquidity(&network);
 
     for (balance, pool_addr, meta) in balance_results {
-        // USDC and USDT typically have 6 decimals on ETH, but 18 decimals on BSC.
-        let min_balance = if network == "bnb" {
-            // 50,000 * 10^18
-            U256::from(50_000_000_000_000_000_000_000u128)
-        } else {
-            // 50,000 * 10^6
-            U256::from(50_000_000_000u64)
-        };
-
         if balance > min_balance {
             let config = PoolConfig {
                 pair: pool_addr,
@@ -244,13 +190,12 @@ async fn main() -> eyre::Result<()> {
     }
 
     // Deduplicate pools
-    valid_pools.sort_by_key(|p| p.pair);
-    valid_pools.dedup_by_key(|p| p.pair);
+    let final_pools = deduplicate_pools(valid_pools);
 
-    let output = Output { pools: valid_pools };
+    let output = Output { pools: final_pools };
     let toml_string = toml::to_string_pretty(&output)?;
 
-    // Создаем output файл вместо вывода в консоль
+    // Create output file instead of console output
     let output_filename = format!("{}_output.toml", network);
     fs::write(&output_filename, &toml_string)?;
 
