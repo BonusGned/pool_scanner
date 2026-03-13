@@ -59,6 +59,15 @@ pub enum PoolTypeConfig {
 }
 ```
 
+### TokenInfo (Output)
+
+```rust
+pub struct TokenInfo {
+    pub address: Address,                  // Token contract address
+    pub symbol: String,                    // Token symbol (from config)
+}
+```
+
 ### PoolConfig (Output)
 
 ```rust
@@ -66,11 +75,15 @@ pub struct PoolConfig {
     pub pair: Address,                      // Pool contract address
     pub dex: String,                        // DEX name
     pub pool_type: PoolTypeConfig,          // Pool version
+    pub token0: Option<TokenInfo>,          // token0 metadata (V2/V3)
+    pub token1: Option<TokenInfo>,          // token1 metadata (V2/V3)
     pub fee_numerator: Option<u64>,         // Optional fee numerator
     pub fee_denominator: Option<u64>,       // Optional fee denominator
     pub fee: Option<u32>,                   // V3 fee tier (100, 500, 3000, 10000)
 }
 ```
+
+`token0`/`token1` are populated for V2/V3 pools using the token address ordering; V1 pools only include `token0`.
 
 ---
 
@@ -107,7 +120,7 @@ The scanner generates token pairs using two strategies:
 
 ### Liquidity Filtering
 
-Pools are validated by checking stablecoin balances:
+Pools are validated by checking stablecoin balances. Configuration specifies `min_liquidity` in normalized units plus token `decimals` (defaults to `18` if omitted), and the code converts to raw on-chain amounts before comparison:
 
 | Network | Minimum Balance | Token Decimals |
 |---------|----------------|----------------|
@@ -137,16 +150,17 @@ rpc_url = "https://..."
 # Multicall3 contract address (for batch calls)
 multicall3_address = "0x..."
 
-# Stablecoin addresses (used for liquidity checks)
-stables = [
-    "0x...", # USDC
-    "0x...", # USDT
-]
+# Tokens to include in pair generation and liquidity checks
+[[tokens]]
+address = "0x..."
+symbol = "USDC"
+decimals = 6
+min_liquidity = "50000" # normalized amount
 
-# Non-stable tokens to pair with stables
-other_tokens = [
-    "0x...", # WETH/WBNB
-]
+[[tokens]]
+address = "0x..."
+symbol = "WETH"
+decimals = 18
 
 # DEX factory contracts
 [[factories]]

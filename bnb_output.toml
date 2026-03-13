@@ -1,12 +1,151 @@
 [[pools]]
+pair = "0x026428e531f30b2714ceff3781d7cdf5d278e96a"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 10000
+
+[pools.token0]
+address = "0x4338665cbb7b2485a8855a139b75d5e34ab0db94"
+symbol = "LTC"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x03f18135c44c64ebfdcbad8297fe5bdafdbbdd86"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x0ab8855c73d567f0ec633cddec43580c5f7e2555"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47"
+symbol = "ADA"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x0adaf134ae0c4583b3a38fc3168a83e33162651e"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x0e1893beeb4d0913d26b9614b18aea29c56d94b9"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd"
+symbol = "LINK"
+
+[[pools]]
+pair = "0x0ed7e52944161450477ee417de9cd3a859b14fd0"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x0f338ec12d3f7c3d77a4b9fcc1f95f3fb6ad0ea6"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x133b3d95bad5405d14d53473671200e9342896bf"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
 pair = "0x1483767e665b3591677fd49f724bf7430c18bf83"
 dex = "biswap"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[[pools]]
+pair = "0x151268db1579ebc5306d4aaa5dcc627646e6986f"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x1ce0c2827e2ef14d5c4f29a091d735a204794041"
+symbol = "AVAX"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
 
 [[pools]]
 pair = "0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae"
 dex = "PancakeSwapV2"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
 
 [[pools]]
 pair = "0x172fcd41e0913e95784454622d1c3724f546f849"
@@ -14,11 +153,137 @@ dex = "PancakeSwapV3"
 pool_type = "v3"
 fee = 100
 
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x1d8b1ed9b3da5d510fd3723e0dd02476e0d7e781"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x1ce0c2827e2ef14d5c4f29a091d735a204794041"
+symbol = "AVAX"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x1e4600929edf7f36b4a7eac4c7571057d82a246c"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x570a5d26f7765ecb712c0924e4de545b89fd43df"
+symbol = "SOL"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x22536030b9ce783b6ddfb9a39ac7f439f568e5e6"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[pools.token0]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0x2354ef4df11afacb85a5c7f98b624072eccddbb1"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0x247f51881d1e3ae0f759afb801413a6c948ef442"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x28415ff2c35b65b9e5c7de82126b4015ab9d031f"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47"
+symbol = "ADA"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x28df0835942396b7a1b7ae1cd068728e6ddbbafd"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x29c5ba7dbb67a4af999a28cc380ad234fe7c1b86"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47"
+symbol = "ADA"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
 [[pools]]
 pair = "0x2c3c320d49019d4f9a92352e947c7e5acfe47d68"
 dex = "UniswapV3"
 pool_type = "v3"
 fee = 100
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
 
 [[pools]]
 pair = "0x36696169c63e42cd08ce11f5deebbcebae652050"
@@ -26,11 +291,124 @@ dex = "PancakeSwapV3"
 pool_type = "v3"
 fee = 500
 
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x380a466ae6896d7d4fcd571e1e24cd5061a836b3"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x3f803ec2b816ea7f06ec76aa2b6f2532f9892d62"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x3fb2623567e21f8c50f0ae86f54ef4849b4eb47b"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x46cf1cf8c69595804ba91dfdd8d6b960c9b0a7c4"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
 [[pools]]
 pair = "0x47a90a2d92a8367a91efa1906bfc8c1e05bf10c4"
 dex = "UniswapV3"
 pool_type = "v3"
 fee = 100
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x4bba1018b967e59220b22ca03f68821a3276c9a6"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x4d170f8714367c44787ae98259ce8adb72240067"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 10000
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x4f3126d5de26413abdcf6948943fb9d0847d9818"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
 
 [[pools]]
 pair = "0x4f31fa980a675570939b737ebdde0471a4be40eb"
@@ -38,11 +416,285 @@ dex = "PancakeSwapV3"
 pool_type = "v3"
 fee = 500
 
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[[pools]]
+pair = "0x4fb87838a29b37598099ef5aa6b3fbeeef987c50"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x531febfeb9a61d948c384acfbe6dcc51057aea7e"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x534d3930edba2c0b90a7973549a0287141c987ef"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd"
+symbol = "LINK"
+
+[[pools]]
+pair = "0x539e0ebfffd39e54a0f7e5f8fec40ade7933a664"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[[pools]]
+pair = "0x58f876857a02d6762e0101bb5c46a8c1ed44dc16"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0x5bf6941f029424674bb93a43b79fc46bf4a67c21"
+dex = "biswap"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x61eb789d75a95caa3ff50ed7e47b96c132fec082"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x6216e04cd40db2c6fbed64f1b5830a98d3a91740"
+dex = "biswap"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x62edaf2a56c9fb55be5f9b1399ac067f6a37013b"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[pools.token0]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x62f0546cbcd684f7c394d8549119e072527c41bc"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x7083609fce4d1d8dc0c979aab8c869ea2c873402"
+symbol = "DOT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x62fcb3c1794fb95bd8b1a97f6ad5d8a7e4943a1e"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x63b30de1a998e9e64fd58a21f68d323b9bcd8f85"
+dex = "biswap"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x66fdb2eccfb58cf098eaa419e5efde841368e489"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3"
+symbol = "DAI"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0x673516e510d702ab5f2bbf0c6b545111a85f7ea7"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47"
+symbol = "ADA"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x6811be5539ba6c92ff15f8270eb79fb28ad8e470"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x6b9e3825e39203277f8fd33371e36b5188b26410"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x4338665cbb7b2485a8855a139b75d5e34ab0db94"
+symbol = "LTC"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x6bbc40579ad1bbd243895ca0acb086bb6300d636"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
 [[pools]]
 pair = "0x6fe9e9de56356f7edbfcbb29fab7cd69471a4869"
 dex = "UniswapV3"
 pool_type = "v3"
 fee = 500
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x71f5a8f7d448e59b1ede00a19fe59e05d125e742"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x74e4716e431f45807dcf19f284c7aa99f18a4fbc"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
 
 [[pools]]
 pair = "0x7862d9b4be2156b15d54f41ee4ede2d5b0b455e4"
@@ -50,10 +702,148 @@ dex = "UniswapV3"
 pool_type = "v3"
 fee = 3000
 
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x7d05c84581f0c41ad80ddf677a510360bae09a5a"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x7efaef62fddcca950418312c6c91aef321375a00"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0x7f51c8aaa6b0599abd16674e2b17fec7a9f674a1"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x804678fa97d91b974ec2af3c843270886528a9e6"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0x813c0decbb1097fff46d0ed6a39fb5f6a83043f4"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0x824eb9fadfb377394430d2744fa7c42916de3ece"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd"
+symbol = "LINK"
+
+[[pools]]
+pair = "0x85faac652b707fdf6907ef726751087f9e0b6687"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
 [[pools]]
 pair = "0x8840c6252e2e86e545defb6da98b2a0e26d8c1ba"
 dex = "biswap"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x8860922eb2795ab0d57363653dd7ebf18d7c0a42"
+dex = "biswap"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47"
+symbol = "ADA"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0x8ec186cd1ad51c380bd23fde29f852226647616c"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
 
 [[pools]]
 pair = "0x92b7807bf19b7dddf89b706143896d05228f3121"
@@ -61,18 +851,434 @@ dex = "PancakeSwapV3"
 pool_type = "v3"
 fee = 100
 
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[[pools]]
+pair = "0x9f599f3d64a9d99ea21e68127bb6ce99f893da61"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0x9f5a0ad81fe7fd5dfb84ee7a0cfb83967359bd90"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x570a5d26f7765ecb712c0924e4de545b89fd43df"
+symbol = "SOL"
+
+[[pools]]
+pair = "0xa2c6f60591738b17f5257eddf10b4cf0138323b1"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[[pools]]
+pair = "0xa322b156b138deaa6b5df1f76154ee019f33db25"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[[pools]]
+pair = "0xa39af17ce4a8eb807e076805da1e2b8ea7d0755b"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0xa585bf3f293dc86ef78324a3bb992ae888254299"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 10000
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x570a5d26f7765ecb712c0924e4de545b89fd43df"
+symbol = "SOL"
+
+[[pools]]
+pair = "0xab46d39cb398fb3649ecba781180016fef75f50b"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x570a5d26f7765ecb712c0924e4de545b89fd43df"
+symbol = "SOL"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xacaac9311b0096e04dfe96b6d87dec867d3883dc"
+dex = "biswap"
+pool_type = "v2"
+
+[pools.token0]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0xafb2da14056725e3ba3a30dd846b6bbbd7886c56"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xbe141893e4c6ad9272e8c04bab7e6a10604501a5"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0xbffec96e8f3b5058b1817c14e4380758fada01ef"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x570a5d26f7765ecb712c0924e4de545b89fd43df"
+symbol = "SOL"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xc7e9d76ba11099af3f330ff829c5f442d571e057"
+dex = "biswap"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xd0e226f674bbf064f54ab47f42473ff80db98cba"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xd15b00e81f98a7db25f1dc1ba6e983a4316c4cac"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xd171b26e4484402de70e3ea256be5a2630d7e88d"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0xd4dca84e1808da3354924cd243c66828cf775470"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
 [[pools]]
 pair = "0xd99c7f6c65857ac913a8f880a4cb84032ab2fc5b"
 dex = "PancakeSwapV2"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xda8ceb724a06819c0a5cdb4304ea0cb27f8304cf"
+dex = "biswap"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0xdd5bad8f8b360d76d12fda230f8baf42fe0022cf"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x7083609fce4d1d8dc0c979aab8c869ea2c873402"
+symbol = "DOT"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xe043558b77e2b4c262d7d6e579b005ceb7f4591c"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 100
+
+[pools.token0]
+address = "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3"
+symbol = "DAI"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0xe3cbe4dd1bd2f7101f17d586f44bab944091d383"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x4338665cbb7b2485a8855a139b75d5e34ab0db94"
+symbol = "LTC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xe3d9f8ef633666771b7f1995aaedeb67d1b3c853"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[[pools]]
+pair = "0xea26b78255df2bbc31c1ebf60010d78670185bd0"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[[pools]]
+pair = "0xeb7528398b2725e1e0374734a87320132223a5c6"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
 
 [[pools]]
 pair = "0xec6557348085aa57c72514d67070dc863c0a5a8c"
 dex = "PancakeSwapV2"
 pool_type = "v2"
 
+[pools.token0]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[pools.token1]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
 [[pools]]
 pair = "0xf2688fb5b81049dfb7703ada5e770543770612c4"
 dex = "PancakeSwapV3"
 pool_type = "v3"
 fee = 100
+
+[pools.token0]
+address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xf45cd219aef8618a92baa7ad848364a158a24f33"
+dex = "PancakeSwapV2"
+pool_type = "v2"
+
+[pools.token0]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[pools.token1]
+address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
+symbol = "BUSD"
+
+[[pools]]
+pair = "0xf9878a5dd55edc120fde01893ea713a4f032229c"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 500
+
+[pools.token0]
+address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
+symbol = "wETH"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"
+
+[[pools]]
+pair = "0xfa7d79f971a70771e5e92bd80ab955edc8602f4d"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
+symbol = "XRP"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xfc75f4e78bf71ed5066db9ca771d4ccb7c1264e0"
+dex = "PancakeSwapV3"
+pool_type = "v3"
+fee = 2500
+
+[pools.token0]
+address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
+symbol = "wBTC"
+
+[pools.token1]
+address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
+symbol = "wBNB"
+
+[[pools]]
+pair = "0xfe4fe5b4575c036ac6d5cccfe13660020270e27a"
+dex = "UniswapV3"
+pool_type = "v3"
+fee = 3000
+
+[pools.token0]
+address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
+symbol = "CAKE"
+
+[pools.token1]
+address = "0x55d398326f99059ff775485246999027b3197955"
+symbol = "USDT"

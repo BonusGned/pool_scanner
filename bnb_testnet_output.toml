@@ -4,36 +4,92 @@ dex = "uniswap_v3"
 pool_type = "v3"
 fee = 3000
 
+[pools.token0]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"
+
 [[pools]]
 pair = "0x0d39601cd99760cc3969f7521e7525478c405b14"
 dex = "pancakeswap_v3"
 pool_type = "v3"
 fee = 2500
 
+[pools.token0]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"
+
 [[pools]]
 pair = "0x58cfaecee724d4c1839f1144575b4b3ee6dd8d5b"
 dex = "uniswap_v2"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"
 
 [[pools]]
 pair = "0x66c1e9644781a3775f15f904c5f539423238e671"
 dex = "pancakeswap_v2"
 pool_type = "v2"
 
+[pools.token0]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"
+
 [[pools]]
 pair = "0x76353372132a2b41365fa6a1a0f662537234d1b0"
 dex = "uniswap_v2"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
 
 [[pools]]
 pair = "0x77ddece7cc66328d89c641bd82cf59303045b0e6"
 dex = "pancakeswap_v2"
 pool_type = "v2"
 
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
+
 [[pools]]
 pair = "0x9428cc5325bfe13bc211e73e7e64e71799a6c9c5"
 dex = "pancakeswap_v2"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"
 
 [[pools]]
 pair = "0xa92d8e1d5e0be8f9db4c733d9500501ff3a007ba"
@@ -41,16 +97,40 @@ dex = "uniswap_v3"
 pool_type = "v3"
 fee = 3000
 
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
+
 [[pools]]
 pair = "0xbb1846e7b738693b1cc7dc9a0d08ea19a79b1060"
 dex = "uniswap_v3"
 pool_type = "v3"
 fee = 3000
 
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"
+
 [[pools]]
 pair = "0xc0782a597dd163114bdfa78c57955aa7b480b4d0"
 dex = "uniswap_v2"
 pool_type = "v2"
+
+[pools.token0]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"
 
 [[pools]]
 pair = "0xd5a16fd8d3fb02c6e7dcda11f6ade699fabc524b"
@@ -58,8 +138,24 @@ dex = "pancakeswap_v3"
 pool_type = "v3"
 fee = 2500
 
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0x9be93fc3788c3f56ccf3f546aca1e4cb054b51c4"
+symbol = "wBNB"
+
 [[pools]]
 pair = "0xe70d49199228a0ca5b4db3e72d35819834e138d7"
 dex = "pancakeswap_v3"
 pool_type = "v3"
 fee = 2500
+
+[pools.token0]
+address = "0x78eb4bd6d6e357ce50e26dc9d0bcbe909dc36cb6"
+symbol = "USDC"
+
+[pools.token1]
+address = "0xe900e6506d4f41a856b68f67d341b8e0a8180d2f"
+symbol = "USDT"

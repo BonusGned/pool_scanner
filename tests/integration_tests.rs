@@ -4,10 +4,11 @@ use pool_scanner::{
     PoolTypeConfig, ScannerConfig, TokenConfig,
 };
 
-fn token(addr: Address, symbol: &str, min_liq: Option<&str>) -> TokenConfig {
+fn token(addr: Address, symbol: &str, min_liq: Option<&str>, decimals: Option<u8>) -> TokenConfig {
     TokenConfig {
         address: addr,
         symbol: symbol.to_string(),
+        decimals,
         min_liquidity: min_liq.map(String::from),
     }
 }
@@ -71,17 +72,20 @@ fn test_end_to_end_pool_processing() {
         token(
             address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
             "USDC",
-            Some("50000000000"),
+            Some("50000"),
+            Some(6),
         ),
         token(
             address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"),
             "USDT",
-            Some("50000000000"),
+            Some("50000"),
+            Some(6),
         ),
         token(
             address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
             "WETH",
-            Some("20000000000000000000"),
+            Some("20"),
+            Some(18),
         ),
     ];
 
@@ -126,6 +130,8 @@ fn test_end_to_end_pool_processing() {
                 pair: *pool_addr,
                 dex: meta.0.clone(),
                 pool_type: meta.1.clone(),
+                token0: None,
+                token1: None,
                 fee_numerator: None,
                 fee_denominator: None,
                 fee: meta.2,
@@ -150,21 +156,25 @@ fn test_per_token_liquidity_thresholds() {
         token(
             address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
             "USDC",
-            Some("50000000000"),
+            Some("50000"),
+            Some(6),
         ),
         token(
             address!("0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"),
             "WBTC",
-            Some("100000000"), // 1 BTC (8 decimals)
+            Some("1"), // 1 BTC (8 decimals)
+            Some(8),
         ),
         token(
             address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
             "WETH",
-            Some("20000000000000000000"), // 20 ETH (18 decimals)
+            Some("20"), // 20 ETH (18 decimals)
+            Some(18),
         ),
         token(
             address!("0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"),
             "wBNB",
+            None,
             None,
         ),
     ];
@@ -202,6 +212,8 @@ fn test_output_file_format() {
             pair: address!("0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"),
             dex: "UniswapV3".to_string(),
             pool_type: PoolTypeConfig::V3,
+            token0: None,
+            token1: None,
             fee_numerator: None,
             fee_denominator: None,
             fee: Some(500),
@@ -210,6 +222,8 @@ fn test_output_file_format() {
             pair: address!("0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"),
             dex: "UniswapV2".to_string(),
             pool_type: PoolTypeConfig::V2,
+            token0: None,
+            token1: None,
             fee_numerator: None,
             fee_denominator: None,
             fee: None,
@@ -277,6 +291,8 @@ fn test_large_scale_pool_processing() {
                 pair: pool_addr,
                 dex: format!("DEX{}", i),
                 pool_type: PoolTypeConfig::V2,
+                token0: None,
+                token1: None,
                 fee_numerator: None,
                 fee_denominator: None,
                 fee: None,

@@ -44,15 +44,87 @@ pub struct TokenConfig {
     pub address: Address,
     pub symbol: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub decimals: Option<u8>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub min_liquidity: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TokenInfo {
+    pub address: Address,
+    pub symbol: String,
 }
 
 impl TokenConfig {
     pub fn min_liquidity_u256(&self) -> Option<U256> {
-        self.min_liquidity
-            .as_ref()
-            .map(|s| s.parse::<U256>().unwrap_or_else(|_| panic!("Invalid min_liquidity for {}: {}", self.symbol, s)))
+        let value = self.min_liquidity.as_ref()?;
+        let decimals = self.decimals.unwrap_or(18);
+
+        Some(
+            parse_normalized_amount(value, decimals).unwrap_or_else(|err| {
+                panic!("Invalid min_liquidity for {}: {}", self.symbol, err)
+            }),
+        )
     }
+}
+
+fn parse_normalized_amount(value: &str, decimals: u8) -> Result<U256, String> {
+    let value = value.trim();
+    if value.is_empty() {
+        return Err("empty amount".to_string());
+    }
+    if value.starts_with('-') {
+        return Err("negative amount".to_string());
+    }
+
+    let mut parts = value.split('.');
+    let whole_raw = parts.next().unwrap_or("");
+    let frac_raw = parts.next().unwrap_or("");
+    if parts.next().is_some() {
+        return Err("invalid amount format".to_string());
+    }
+
+    let whole = clean_digits(whole_raw)?;
+    let frac = clean_digits(frac_raw)?;
+
+    if whole.is_empty() && frac.is_empty() {
+        return Err("empty amount".to_string());
+    }
+
+    if frac.len() > decimals as usize {
+        return Err(format!(
+            "too many decimal places: {} > {}",
+            frac.len(),
+            decimals
+        ));
+    }
+
+    let mut combined = String::with_capacity(whole.len() + decimals as usize);
+    combined.push_str(if whole.is_empty() { "0" } else { &whole });
+    combined.push_str(&frac);
+    combined.push_str(&"0".repeat(decimals as usize - frac.len()));
+
+    combined
+        .parse::<U256>()
+        .map_err(|_| "invalid digits after normalization".to_string())
+}
+
+fn clean_digits(input: &str) -> Result<String, String> {
+    if input.is_empty() {
+        return Ok(String::new());
+    }
+
+    let mut out = String::with_capacity(input.len());
+    for ch in input.chars() {
+        if ch == '_' {
+            continue;
+        }
+        if !ch.is_ascii_digit() {
+            return Err(format!("invalid character '{}'", ch));
+        }
+        out.push(ch);
+    }
+    Ok(out)
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -76,6 +148,10 @@ pub struct PoolConfig {
     pub pair: Address,
     pub dex: String,
     pub pool_type: PoolTypeConfig,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token0: Option<TokenInfo>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token1: Option<TokenInfo>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub fee_numerator: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -117,10 +193,11 @@ mod tests {
     use super::*;
     use alloy::primitives::address;
 
-    fn token(addr: Address, symbol: &str, min_liq: Option<&str>) -> TokenConfig {
+    fn token(addr: Address, symbol: &str, min_liq: Option<&str>, decimals: Option<u8>) -> TokenConfig {
         TokenConfig {
             address: addr,
             symbol: symbol.to_string(),
+            decimals,
             min_liquidity: min_liq.map(String::from),
         }
     }
@@ -137,16 +214,19 @@ mod tests {
                 [[tokens]]
                 address = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
                 symbol = "USDC"
-                min_liquidity = "50000000000"
+                decimals = 6
+                min_liquidity = "50000"
 
                 [[tokens]]
                 address = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
                 symbol = "USDT"
-                min_liquidity = "50000000000"
+                decimals = 6
+                min_liquidity = "50000"
 
                 [[tokens]]
                 address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
                 symbol = "WETH"
+                decimals = 18
 
                 [[factories]]
                 name = "UniswapV2"
@@ -223,6 +303,14 @@ mod tests {
                 pair: address!("0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"),
                 dex: "UniswapV3".to_string(),
                 pool_type: PoolTypeConfig::V3,
+                token0: Some(TokenInfo {
+                    address: address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+                    symbol: "USDC".to_string(),
+                }),
+                token1: Some(TokenInfo {
+                    address: address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
+                    symbol: "WETH".to_string(),
+                }),
                 fee_numerator: None,
                 fee_denominator: None,
                 fee: Some(500),
@@ -231,6 +319,8 @@ mod tests {
             let serialized = toml::to_string(&pool).unwrap();
             assert!(serialized.contains("dex = \"UniswapV3\""));
             assert!(serialized.contains("pool_type = \"v3\""));
+            assert!(serialized.contains("token0"));
+            assert!(serialized.contains("token1"));
             assert!(serialized.contains("fee = 500"));
         }
 
@@ -242,6 +332,8 @@ mod tests {
                         pair: address!("0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"),
                         dex: "UniswapV3".to_string(),
                         pool_type: PoolTypeConfig::V3,
+                        token0: None,
+                        token1: None,
                         fee_numerator: None,
                         fee_denominator: None,
                         fee: Some(500),
@@ -250,6 +342,8 @@ mod tests {
                         pair: address!("0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"),
                         dex: "UniswapV2".to_string(),
                         pool_type: PoolTypeConfig::V2,
+                        token0: None,
+                        token1: None,
                         fee_numerator: None,
                         fee_denominator: None,
                         fee: None,
@@ -265,13 +359,22 @@ mod tests {
 
         #[test]
         fn test_token_config_min_liquidity_parsing() {
-            let t = token(Address::ZERO, "USDT", Some("50000000000000000000000"));
+            let t = token(Address::ZERO, "USDT", Some("50000"), Some(18));
             assert_eq!(
                 t.min_liquidity_u256().unwrap(),
                 U256::from(50_000_000_000_000_000_000_000u128)
             );
 
-            let t_none = token(Address::ZERO, "WBNB", None);
+            let t_fraction = token(Address::ZERO, "USDC", Some("0.5"), Some(6));
+            assert_eq!(t_fraction.min_liquidity_u256().unwrap(), U256::from(500_000u64));
+
+            let t_default = token(Address::ZERO, "DAI", Some("1"), None);
+            assert_eq!(
+                t_default.min_liquidity_u256().unwrap(),
+                U256::from(1_000_000_000_000_000_000u128)
+            );
+
+            let t_none = token(Address::ZERO, "WBNB", None, None);
             assert!(t_none.min_liquidity_u256().is_none());
         }
     }
@@ -282,9 +385,24 @@ mod tests {
         #[test]
         fn test_generate_pairs_all_combinations() {
             let tokens = vec![
-                token(address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), "USDC", Some("50000000000")),
-                token(address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"), "USDT", Some("50000000000")),
-                token(address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), "WETH", None),
+                token(
+                    address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+                    "USDC",
+                    Some("50000"),
+                    Some(6),
+                ),
+                token(
+                    address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"),
+                    "USDT",
+                    Some("50000"),
+                    Some(6),
+                ),
+                token(
+                    address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
+                    "WETH",
+                    None,
+                    None,
+                ),
             ];
 
             let pairs = generate_pairs(&tokens);
@@ -299,10 +417,30 @@ mod tests {
         #[test]
         fn test_generate_pairs_four_tokens() {
             let tokens = vec![
-                token(address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), "USDC", None),
-                token(address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"), "USDT", None),
-                token(address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), "WETH", None),
-                token(address!("0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"), "AAVE", None),
+                token(
+                    address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+                    "USDC",
+                    None,
+                    None,
+                ),
+                token(
+                    address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"),
+                    "USDT",
+                    None,
+                    None,
+                ),
+                token(
+                    address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
+                    "WETH",
+                    None,
+                    None,
+                ),
+                token(
+                    address!("0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"),
+                    "AAVE",
+                    None,
+                    None,
+                ),
             ];
 
             let pairs = generate_pairs(&tokens);
@@ -320,7 +458,12 @@ mod tests {
         #[test]
         fn test_generate_pairs_single_token() {
             let tokens = vec![
-                token(address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), "USDC", None),
+                token(
+                    address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+                    "USDC",
+                    None,
+                    None,
+                ),
             ];
             let pairs = generate_pairs(&tokens);
             assert_eq!(pairs.len(), 0);
@@ -329,9 +472,24 @@ mod tests {
         #[test]
         fn test_generate_pairs_no_duplicates() {
             let tokens = vec![
-                token(address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), "USDC", None),
-                token(address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"), "USDT", None),
-                token(address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), "WETH", None),
+                token(
+                    address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+                    "USDC",
+                    None,
+                    None,
+                ),
+                token(
+                    address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"),
+                    "USDT",
+                    None,
+                    None,
+                ),
+                token(
+                    address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
+                    "WETH",
+                    None,
+                    None,
+                ),
             ];
 
             let pairs = generate_pairs(&tokens);
@@ -346,9 +504,24 @@ mod tests {
         #[test]
         fn test_liquidity_tokens_filters_correctly() {
             let tokens = vec![
-                token(address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"), "USDC", Some("50000000000")),
-                token(address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), "WETH", Some("20000000000000000000")),
-                token(address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"), "WBNB", None),
+                token(
+                    address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+                    "USDC",
+                    Some("50000"),
+                    Some(6),
+                ),
+                token(
+                    address!("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
+                    "WETH",
+                    Some("20"),
+                    Some(18),
+                ),
+                token(
+                    address!("0xdAC17F958D2ee523a2206206994597C13D831ec7"),
+                    "WBNB",
+                    None,
+                    None,
+                ),
             ];
 
             let liq = liquidity_tokens(&tokens);
@@ -362,8 +535,8 @@ mod tests {
         #[test]
         fn test_liquidity_tokens_none() {
             let tokens = vec![
-                token(Address::ZERO, "A", None),
-                token(Address::ZERO, "B", None),
+                token(Address::ZERO, "A", None, None),
+                token(Address::ZERO, "B", None, None),
             ];
             assert!(liquidity_tokens(&tokens).is_empty());
         }
@@ -381,6 +554,8 @@ mod tests {
                     pair: pool_addr,
                     dex: "UniswapV3".to_string(),
                     pool_type: PoolTypeConfig::V3,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: Some(500),
@@ -389,6 +564,8 @@ mod tests {
                     pair: pool_addr,
                     dex: "UniswapV3".to_string(),
                     pool_type: PoolTypeConfig::V3,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: Some(500),
@@ -406,6 +583,8 @@ mod tests {
                     pair: address!("0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"),
                     dex: "UniswapV3".to_string(),
                     pool_type: PoolTypeConfig::V3,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: Some(500),
@@ -414,6 +593,8 @@ mod tests {
                     pair: address!("0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"),
                     dex: "UniswapV2".to_string(),
                     pool_type: PoolTypeConfig::V2,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: None,
@@ -438,6 +619,8 @@ mod tests {
                     pair: address!("0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"),
                     dex: "UniswapV2".to_string(),
                     pool_type: PoolTypeConfig::V2,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: None,
@@ -446,6 +629,8 @@ mod tests {
                     pair: address!("0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"),
                     dex: "UniswapV3".to_string(),
                     pool_type: PoolTypeConfig::V3,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: Some(500),
@@ -466,6 +651,8 @@ mod tests {
                     pair: addr1,
                     dex: "DEX1".to_string(),
                     pool_type: PoolTypeConfig::V3,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: Some(500),
@@ -474,6 +661,8 @@ mod tests {
                     pair: addr2,
                     dex: "DEX2".to_string(),
                     pool_type: PoolTypeConfig::V2,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: None,
@@ -482,6 +671,8 @@ mod tests {
                     pair: addr1,
                     dex: "DEX3".to_string(),
                     pool_type: PoolTypeConfig::V3,
+                    token0: None,
+                    token1: None,
                     fee_numerator: None,
                     fee_denominator: None,
                     fee: Some(3000),

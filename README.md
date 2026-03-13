@@ -41,20 +41,22 @@ pool_scanner/
 
 ## Configuration
 
-Configuration files are located in the `config/` directory. Each network has its own TOML file with the following structure:
+Configuration files are located in the `config/` directory. Each network has its own TOML file with the following structure. `min_liquidity` is specified in normalized units and converted to on-chain amounts using `decimals` (defaults to `18` if omitted):
 
 ```toml
 rpc_url = "https://..."                    # RPC endpoint
 multicall3_address = "0x..."               # Multicall3 contract address
 
-stables = [                                # Stablecoin addresses
-    "0x...", # USDC
-    "0x...", # USDT
-]
+[[tokens]]
+address = "0x..."
+symbol = "USDC"
+decimals = 6
+min_liquidity = "50000"                    # normalized amount
 
-other_tokens = [                           # Other tokens to pair (e.g., WETH, WBNB)
-    "0x...",
-]
+[[tokens]]
+address = "0x..."
+symbol = "WETH"
+decimals = 18
 
 [[factories]]                              # DEX factory contracts
 name = "UniswapV2"
@@ -103,12 +105,16 @@ Example output:
 pair = "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640"
 dex = "UniswapV3"
 pool_type = "v3"
+token0 = { address = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", symbol = "USDC" }
+token1 = { address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", symbol = "WETH" }
 fee = 500
 
 [[pools]]
 pair = "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
 dex = "UniswapV2"
 pool_type = "v2"
+token0 = { address = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", symbol = "USDC" }
+token1 = { address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", symbol = "WETH" }
 ```
 
 ## Testing

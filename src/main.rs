@@ -2,7 +2,8 @@ use alloy::primitives::{Address, U256};
 use alloy::providers::layers::CallBatchLayer;
 use alloy::providers::ProviderBuilder;
 use alloy::sol;
-use pool_scanner::{deduplicate_pools, Output, PoolConfig, PoolTypeConfig, ScannerConfig};
+use pool_scanner::{deduplicate_pools, Output, PoolConfig, PoolTypeConfig, ScannerConfig, TokenInfo};
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::path::Path;
@@ -32,6 +33,20 @@ sol! {
     }
 }
 
+#[derive(Clone)]
+struct PoolMeta {
+    dex: String,
+    pool_type: PoolTypeConfig,
+    fee: Option<u32>,
+    token0: Option<Address>,
+    token1: Option<Address>,
+}
+
+fn token_info_from_address(addr: Address, symbols: &HashMap<Address, String>) -> TokenInfo {
+    let symbol = symbols.get(&addr).cloned().unwrap_or_else(|| addr.to_string());
+    TokenInfo { address: addr, symbol }
+}
+
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     let network = env::var("NETWORK").unwrap_or_else(|_| "eth".to_string());
@@ -56,19 +71,30 @@ async fn main() -> eyre::Result<()> {
         .layer(CallBatchLayer::new().wait(Duration::from_millis(10)))
         .connect_http(url);
 
-    type PoolMetaTuple = (String, PoolTypeConfig, Option<u32>);
+    type PoolMetaTuple = PoolMeta;
     let mut pool_futures: Vec<
         std::pin::Pin<Box<dyn std::future::Future<Output = (Address, PoolMetaTuple)>>>,
     > = Vec::new();
 
     let pairs_to_check = pool_scanner::generate_pairs(&config.tokens);
     let all_addresses: Vec<Address> = config.tokens.iter().map(|t| t.address).collect();
+    let token_symbol_map: HashMap<Address, String> = config
+        .tokens
+        .iter()
+        .map(|t| (t.address, t.symbol.clone()))
+        .collect();
 
     for factory in &config.factories {
         match factory.factory_type {
             PoolTypeConfig::V1 => {
                 for &token_addr in &all_addresses {
-                    let meta = (factory.name.clone(), PoolTypeConfig::V1, None);
+                    let meta = PoolMeta {
+                        dex: factory.name.clone(),
+                        pool_type: PoolTypeConfig::V1,
+                        fee: None,
+                        token0: Some(token_addr),
+                        token1: None,
+                    };
                     let provider = provider.clone();
                     let factory_address = factory.address;
                     pool_futures.push(Box::pin(async move {
@@ -84,7 +110,14 @@ async fn main() -> eyre::Result<()> {
             }
             PoolTypeConfig::V2 => {
                 for &(t0, t1) in &pairs_to_check {
-                    let meta = (factory.name.clone(), PoolTypeConfig::V2, None);
+                    let (token0, token1) = if t0 < t1 { (t0, t1) } else { (t1, t0) };
+                    let meta = PoolMeta {
+                        dex: factory.name.clone(),
+                        pool_type: PoolTypeConfig::V2,
+                        fee: None,
+                        token0: Some(token0),
+                        token1: Some(token1),
+                    };
                     let provider = provider.clone();
                     let factory_address = factory.address;
                     pool_futures.push(Box::pin(async move {
@@ -105,7 +138,14 @@ async fn main() -> eyre::Result<()> {
                 let v3_fees = vec![100u32, 500u32, 2500u32, 3000u32, 10000u32];
                 for &(t0, t1) in &pairs_to_check {
                     for &fee in &v3_fees {
-                        let meta = (factory.name.clone(), PoolTypeConfig::V3, Some(fee));
+                        let (token0, token1) = if t0 < t1 { (t0, t1) } else { (t1, t0) };
+                        let meta = PoolMeta {
+                            dex: factory.name.clone(),
+                            pool_type: PoolTypeConfig::V3,
+                            fee: Some(fee),
+                            token0: Some(token0),
+                            token1: Some(token1),
+                        };
                         let fee_uint = alloy::primitives::Uint::<24, 1>::from(fee);
                         let provider = provider.clone();
                         let factory_address = factory.address;
@@ -166,11 +206,17 @@ async fn main() -> eyre::Result<()> {
         if balance > min_liq {
             valid_pools.push(PoolConfig {
                 pair: pool_addr,
-                dex: meta.0,
-                pool_type: meta.1,
+                dex: meta.dex,
+                pool_type: meta.pool_type,
+                token0: meta
+                    .token0
+                    .map(|addr| token_info_from_address(addr, &token_symbol_map)),
+                token1: meta
+                    .token1
+                    .map(|addr| token_info_from_address(addr, &token_symbol_map)),
                 fee_numerator: None,
                 fee_denominator: None,
-                fee: meta.2,
+                fee: meta.fee,
             });
         }
     }
