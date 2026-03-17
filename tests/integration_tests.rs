@@ -17,8 +17,7 @@ fn token(addr: Address, symbol: &str, min_liq: Option<&str>, decimals: Option<u8
 fn test_load_eth_config_from_file() {
     let config_content =
         std::fs::read_to_string("config/eth.toml").expect("Failed to read eth.toml");
-    let config: ScannerConfig =
-        toml::from_str(&config_content).expect("Failed to parse eth.toml");
+    let config: ScannerConfig = toml::from_str(&config_content).expect("Failed to parse eth.toml");
 
     assert!(!config.rpc_url.is_empty());
     assert!(config.rpc_url.starts_with("http"));
@@ -42,8 +41,7 @@ fn test_load_eth_config_from_file() {
 fn test_load_bnb_config_from_file() {
     let config_content =
         std::fs::read_to_string("config/bnb.toml").expect("Failed to read bnb.toml");
-    let config: ScannerConfig =
-        toml::from_str(&config_content).expect("Failed to parse bnb.toml");
+    let config: ScannerConfig = toml::from_str(&config_content).expect("Failed to parse bnb.toml");
 
     assert!(!config.rpc_url.is_empty());
     assert!(config.tokens.len() >= 3);

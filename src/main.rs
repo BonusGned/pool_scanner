@@ -2,13 +2,18 @@ use alloy::primitives::{Address, U256};
 use alloy::providers::layers::CallBatchLayer;
 use alloy::providers::ProviderBuilder;
 use alloy::sol;
-use pool_scanner::{deduplicate_pools, Output, PoolConfig, PoolTypeConfig, ScannerConfig, TokenInfo};
+use futures::stream::StreamExt;
+use pool_scanner::{
+    deduplicate_pools, Output, PoolConfig, PoolTypeConfig, ScannerConfig, TokenInfo,
+};
 use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::path::Path;
 use std::time::Duration;
 use url::Url;
+
+const CONCURRENT_REQUESTS: usize = 200;
 
 sol! {
     #[sol(rpc)]
@@ -43,8 +48,14 @@ struct PoolMeta {
 }
 
 fn token_info_from_address(addr: Address, symbols: &HashMap<Address, String>) -> TokenInfo {
-    let symbol = symbols.get(&addr).cloned().unwrap_or_else(|| addr.to_string());
-    TokenInfo { address: addr, symbol }
+    let symbol = symbols
+        .get(&addr)
+        .cloned()
+        .unwrap_or_else(|| addr.to_string());
+    TokenInfo {
+        address: addr,
+        symbol,
+    }
 }
 
 #[tokio::main]
@@ -71,10 +82,11 @@ async fn main() -> eyre::Result<()> {
         .layer(CallBatchLayer::new().wait(Duration::from_millis(10)))
         .connect_http(url);
 
-    type PoolMetaTuple = PoolMeta;
-    let mut pool_futures: Vec<
-        std::pin::Pin<Box<dyn std::future::Future<Output = (Address, PoolMetaTuple)>>>,
-    > = Vec::new();
+    type PoolFuture = std::pin::Pin<Box<dyn std::future::Future<Output = (Address, PoolMeta)>>>;
+    type BalanceFuture =
+        std::pin::Pin<Box<dyn std::future::Future<Output = (U256, U256, Address, PoolMeta)>>>;
+
+    let mut pool_futures: Vec<PoolFuture> = Vec::new();
 
     let pairs_to_check = pool_scanner::generate_pairs(&config.tokens);
     let all_addresses: Vec<Address> = config.tokens.iter().map(|t| t.address).collect();
@@ -153,7 +165,10 @@ async fn main() -> eyre::Result<()> {
                             let univ3 = IUniswapV3Factory::new(factory_address, provider);
                             let pool_addr = match univ3.getPool(t0, t1, fee_uint).call().await {
                                 Ok(r) => r,
-                                Err(_) => Address::ZERO,
+                                Err(e) => {
+                                    eprintln!("V3 Error for {} / {} fee={}: {:?}", t0, t1, fee, e);
+                                    Address::ZERO
+                                }
                             };
                             (pool_addr, meta)
                         })
@@ -165,7 +180,12 @@ async fn main() -> eyre::Result<()> {
         }
     }
 
-    let results = futures::future::join_all(pool_futures).await;
+    eprintln!("Pool discovery: {} queries queued", pool_futures.len());
+
+    let results: Vec<_> = futures::stream::iter(pool_futures)
+        .buffer_unordered(CONCURRENT_REQUESTS)
+        .collect()
+        .await;
 
     let mut pool_addresses = Vec::new();
     for (pool_addr, meta) in results {
@@ -174,32 +194,62 @@ async fn main() -> eyre::Result<()> {
         }
     }
 
-    let liq_tokens = pool_scanner::liquidity_tokens(&config.tokens);
+    eprintln!(
+        "Pool discovery: {} non-zero pools found",
+        pool_addresses.len()
+    );
+
+    let mut liq_tokens_map = HashMap::new();
+    for (addr, min_liq) in pool_scanner::liquidity_tokens(&config.tokens) {
+        liq_tokens_map.insert(addr, min_liq);
+    }
 
     // (balance, min_liquidity, pool_addr, meta)
-    let mut balance_futures: Vec<
-        std::pin::Pin<Box<dyn std::future::Future<Output = (U256, U256, Address, PoolMetaTuple)>>>,
-    > = Vec::new();
+    let mut balance_futures: Vec<BalanceFuture> = Vec::new();
 
     for (pool_addr, meta) in &pool_addresses {
-        for &(token_addr, min_liq) in &liq_tokens {
-            let pool_addr_clone = *pool_addr;
-            let meta_clone = meta.clone();
-            let provider = provider.clone();
+        let mut tokens_to_check = Vec::new();
+        if let Some(t0) = meta.token0 {
+            tokens_to_check.push(t0);
+        }
+        if let Some(t1) = meta.token1 {
+            tokens_to_check.push(t1);
+        }
 
-            balance_futures.push(Box::pin(async move {
-                let erc20 = ERC20::new(token_addr, provider);
-                let balance = match erc20.balanceOf(pool_addr_clone).call().await {
-                    Ok(r) => r,
-                    Err(_) => U256::ZERO,
-                };
-                (balance, min_liq, pool_addr_clone, meta_clone)
-            })
-                as std::pin::Pin<Box<dyn std::future::Future<Output = _>>>);
+        for token_addr in tokens_to_check {
+            if let Some(&min_liq) = liq_tokens_map.get(&token_addr) {
+                let pool_addr_clone = *pool_addr;
+                let meta_clone = meta.clone();
+                let provider = provider.clone();
+
+                balance_futures.push(Box::pin(async move {
+                    let erc20 = ERC20::new(token_addr, provider);
+                    let balance = match erc20.balanceOf(pool_addr_clone).call().await {
+                        Ok(r) => r,
+                        Err(e) => {
+                            eprintln!(
+                                "balanceOf error token={} pool={}: {:?}",
+                                token_addr, pool_addr_clone, e
+                            );
+                            U256::ZERO
+                        }
+                    };
+                    (balance, min_liq, pool_addr_clone, meta_clone)
+                })
+                    as std::pin::Pin<Box<dyn std::future::Future<Output = _>>>);
+            }
         }
     }
 
-    let balance_results = futures::future::join_all(balance_futures).await;
+    eprintln!(
+        "Liquidity check: {} balance queries queued",
+        balance_futures.len()
+    );
+
+    let balance_results: Vec<_> = futures::stream::iter(balance_futures)
+        .buffer_unordered(CONCURRENT_REQUESTS)
+        .collect()
+        .await;
 
     let mut valid_pools = Vec::new();
     for (balance, min_liq, pool_addr, meta) in balance_results {
@@ -220,6 +270,11 @@ async fn main() -> eyre::Result<()> {
             });
         }
     }
+
+    eprintln!(
+        "Liquidity check: {} pools passed (before dedup)",
+        valid_pools.len()
+    );
 
     let final_pools = deduplicate_pools(valid_pools);
 

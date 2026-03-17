@@ -61,9 +61,8 @@ impl TokenConfig {
         let decimals = self.decimals.unwrap_or(18);
 
         Some(
-            parse_normalized_amount(value, decimals).unwrap_or_else(|err| {
-                panic!("Invalid min_liquidity for {}: {}", self.symbol, err)
-            }),
+            parse_normalized_amount(value, decimals)
+                .unwrap_or_else(|err| panic!("Invalid min_liquidity for {}: {}", self.symbol, err)),
         )
     }
 }
@@ -193,7 +192,12 @@ mod tests {
     use super::*;
     use alloy::primitives::address;
 
-    fn token(addr: Address, symbol: &str, min_liq: Option<&str>, decimals: Option<u8>) -> TokenConfig {
+    fn token(
+        addr: Address,
+        symbol: &str,
+        min_liq: Option<&str>,
+        decimals: Option<u8>,
+    ) -> TokenConfig {
         TokenConfig {
             address: addr,
             symbol: symbol.to_string(),
@@ -366,7 +370,10 @@ mod tests {
             );
 
             let t_fraction = token(Address::ZERO, "USDC", Some("0.5"), Some(6));
-            assert_eq!(t_fraction.min_liquidity_u256().unwrap(), U256::from(500_000u64));
+            assert_eq!(
+                t_fraction.min_liquidity_u256().unwrap(),
+                U256::from(500_000u64)
+            );
 
             let t_default = token(Address::ZERO, "DAI", Some("1"), None);
             assert_eq!(
@@ -457,14 +464,12 @@ mod tests {
 
         #[test]
         fn test_generate_pairs_single_token() {
-            let tokens = vec![
-                token(
-                    address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
-                    "USDC",
-                    None,
-                    None,
-                ),
-            ];
+            let tokens = vec![token(
+                address!("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+                "USDC",
+                None,
+                None,
+            )];
             let pairs = generate_pairs(&tokens);
             assert_eq!(pairs.len(), 0);
         }
