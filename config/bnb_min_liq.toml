@@ -6,25 +6,24 @@ multicall3_address = "0xcA11bde05977b3631167028862bE2a173976CA11"
 address = "0x55d398326f99059ff775485246999027b3197955"
 symbol = "USDT"
 decimals = 18
-min_liquidity = "50000"                                # 50,000
+min_liquidity = "10000"                                # 50,000
 
 [[tokens]]
 address = "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d"
 symbol = "USDC"
 decimals = 18
-min_liquidity = "50000"                                # 50,000
+min_liquidity = "10000"                                # 50,000
 
 [[tokens]]
 address = "0x477c2c0459004e3354ba427fa285d7c053203c0e"
 symbol = "LIGHT"
 decimals = 6
-min_liquidity = "1000000"
 
 [[tokens]]
 address = "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c"
 symbol = "wBNB"
 decimals = 18
-min_liquidity = "100"
+min_liquidity = "20"
 
 [[tokens]]
 address = "0xed9ae3def8d6f052971bb8b6d1975ff267cf9aad"
@@ -86,37 +85,36 @@ decimals = 18
 address = "0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd"
 symbol = "LINK"
 decimals = 18
-min_liquidity = "10000"
+min_liquidity = "2000"
 
 [[tokens]]
 address = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c"
 symbol = "wBTC"
 decimals = 18
-min_liquidity = "1"
+min_liquidity = "0.2"
 
 [[tokens]]
 address = "0x2170ed0880ac9a755fd29b2688956bd959f933f8"
 symbol = "wETH"
 decimals = 18
-min_liquidity = "30"
+min_liquidity = "8"
 
 [[tokens]]
 address = "0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3"
 symbol = "DAI"
 decimals = 18
-min_liquidity = "50000"
+min_liquidity = "10000"
 
 [[tokens]]
 address = "0x4338665cbb7b2485a8855a139b75d5e34ab0db94"
 symbol = "LTC"
 decimals = 18
-min_liquidity = "1000"
 
 [[tokens]]
 address = "0x2859e4544c4bb03966803b044a93563bd2d0dd4d"
 symbol = "SHIB"
 decimals = 18
-min_liquidity = "10000000000"
+min_liquidity = "2000000000"
 
 [[tokens]]
 address = "0x1ce0c2827e2ef14d5c4f29a091d735a204794041"
@@ -134,151 +132,141 @@ min_liquidity = "60000"
 address = "0x570a5d26f7765ecb712c0924e4de545b89fd43df"
 symbol = "SOL"
 decimals = 18
-min_liquidity = "600"
+min_liquidity = "80"
 
 [[tokens]]
 address = "0x7083609fce4d1d8dc0c979aab8c869ea2c873402"
 symbol = "DOT"
 decimals = 18
-min_liquidity = "60000"
+min_liquidity = "8000"
 
 [[tokens]]
 address = "0xe9e7cea3dedca5984780bafc599bd69add087d56"
 symbol = "BUSD"
 decimals = 18
-min_liquidity = "50000"
+min_liquidity = "10000"
 
 [[tokens]]
 address = "0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82"
 symbol = "CAKE"
 decimals = 18
-min_liquidity = "60000"
+min_liquidity = "10000"
 
 [[tokens]]
 address = "0x3ee2200efb3400fabb9aacf31297cbdd1d435d47"
 symbol = "ADA"
 decimals = 18
-min_liquidity = "300000"
+min_liquidity = "80000"
 
 [[tokens]]
 address = "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe"
 symbol = "XRP"
 decimals = 18
-min_liquidity = "60000"
+min_liquidity = "10000"
 
 [[tokens]]
 address = "0xba2ae424d960c26247dd6c32edc70b295c744c43"
 symbol = "DOGE"
 decimals = 8
-min_liquidity = "500000"
+min_liquidity = "100000"
 
 [[tokens]]
 address = "0xfb6115445bff7b52feb98650c87f44907e58f802"
 symbol = "AAVE"
 decimals = 18
-min_liquidity = "500"
+min_liquidity = "100"
 
 [[tokens]]
 address = "0xce7de646e7208a4ef112cb6ed5038fa6cc6b12e3"
 symbol = "TRON"
 decimals = 6
-min_liquidity = "170000"
+min_liquidity = "40000"
 
 [[tokens]]
 address = "0x85EAC5Ac2F758618dFa09bDbe0cf174e7d574D5B"
 symbol = "TRX"
 decimals = 18
-min_liquidity = "170000"
+min_liquidity = "40000"
 
 [[tokens]]
 address = "0x1ba42e5193dfa8b03d15dd1b86a3113bbbef8eeb"
 symbol = "zCASH"
 decimals = 18
-min_liquidity = "250"
+min_liquidity = "50"
 
 [[tokens]]
 address = "0xbf5140a22578168fd562dccf235e5d43a02ce9b1"
 symbol = "UNI"
 decimals = 18
-min_liquidity = "13000"
+min_liquidity = "2600"
 
 [[tokens]]
 address = "0x0d8ce2a99bb6e3b7db580ed848240e4a0f9ae153"
 symbol = "FIL"
 decimals = 18
-min_liquidity = "55000"
+min_liquidity = "11000"
 
 [[tokens]]
 address = "0x43c934a845205f0b514417d757d7235b8f53f1b9"
 symbol = "XLM"
 decimals = 18
-min_liquidity = "300000"
+min_liquidity = "60000"
 
 [[tokens]]
 address = "0x000Ae314E2A2172a039B26378814C252734f556A"
 symbol = "ASTER"
 decimals = 18
-min_liquidity = "80000"
+min_liquidity = "16000"
 
 [[tokens]]
 address = "0x6985884c4392d348587b19cb9eaaf157f13271cd"
 symbol = "ZRO"
 decimals = 18
-min_liquidity = "25000"
 
 [[tokens]]
 address = "0xb0b92de23bAa85fB06208277E925ceD53edab482"
 symbol = "TRIA"
 decimals = 18
-min_liquidity = "1700000"
 
 [[tokens]]
 address = "0xda7ad9dea9397cffddae2f8a052b82f1484252b3"
 symbol = "RIVER"
 decimals = 18
-min_liquidity = "2500"
 
 [[tokens]]
 address = "0x7ec43cf65f1663f820427c62a5780b8f2e25593a"
 symbol = "LAB"
 decimals = 18
-min_liquidity = "270000"
 
 [[tokens]]
 address = "0x44f161ae29361e332dea039dfa2f404e0bc5b5cc"
 symbol = "HUMANITY"
 decimals = 18
-min_liquidity = "420000"
 
 [[tokens]]
 address = "0x9123400446a56176eb1b6be9ee5cf703e409f492"
 symbol = "TRADOR"
 decimals = 18
-min_liquidity = "27000"
 
 [[tokens]]
 address = "0xd89b7dd376e671c124352267516bef1c2cc231a3"
 symbol = "ZKP"
 decimals = 18
-min_liquidity = "60000"
 
 [[tokens]]
 address = "0x81d3a238b02827f62b9f390f947d36d4a5bf89d2"
 symbol = "CLO"
 decimals = 18
-min_liquidity = "95000"
 
 [[tokens]]
 address = "0x97693439EA2f0ecdeb9135881E49f354656a911c"
 symbol = "RAVE"
 decimals = 18
-min_liquidity = "190000"
 
 [[tokens]]
 address = "0x0a43fc31a73013089df59194872ecae4cae14444"
 symbol = "4"
 decimals = 18
-min_liquidity = "6700000"
 
 
 [[factories]]

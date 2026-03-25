@@ -34,3 +34,5 @@ ehthumbs.db
 # Environment variables
 .env
 .env.*
+
+*.sol

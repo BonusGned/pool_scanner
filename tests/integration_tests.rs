@@ -100,7 +100,8 @@ fn test_end_to_end_pool_processing() {
     // Simulate: pool1 has 100k USDC (above 50k threshold)
     // pool2 has 10k USDT (below 50k threshold)
     // pool3 has 25 WETH (above 20 WETH threshold)
-    let balance_results: Vec<(U256, U256, Address, (String, PoolTypeConfig, Option<u32>))> = vec![
+    type BalanceResult = (U256, U256, Address, (String, PoolTypeConfig, Option<u32>));
+    let balance_results: Vec<BalanceResult> = vec![
         (
             U256::from(100_000_000_000u64),
             U256::from(50_000_000_000u64),
@@ -241,7 +242,7 @@ fn test_output_file_format() {
 
 #[test]
 fn test_factory_config_variants() {
-    let factories = vec![
+    let factories = [
         FactoryConfig {
             name: "TestV1".to_string(),
             address: address!("0x0000000000000000000000000000000000000001"),
