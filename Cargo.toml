@@ -6,9 +6,6 @@ edition = "2021"
 [dependencies]
 alloy = { version = "1.7", features = [
     "provider-http",
-    "provider-ws",
-    "signers",
-    "signer-local",
     "sol-types",
     "contract",
     "rpc-types",

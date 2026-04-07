@@ -4,31 +4,8 @@
 //! decentralized exchange (DEX) liquidity pools across multiple EVM-compatible networks.
 
 use alloy::primitives::{Address, U256};
-use alloy::sol;
 use serde::{Deserialize, Serialize};
-
-sol! {
-    #[sol(rpc)]
-    contract ERC20 {
-        function balanceOf(address account) external view returns (uint256);
-        function decimals() external view returns (uint8);
-    }
-
-    #[sol(rpc)]
-    contract IUniswapV2Factory {
-        function getPair(address tokenA, address tokenB) external view returns (address pair);
-    }
-
-    #[sol(rpc)]
-    contract IUniswapV3Factory {
-        function getPool(address tokenA, address tokenB, uint24 fee) external view returns (address pool);
-    }
-
-    #[sol(rpc)]
-    contract IUniswapV1Factory {
-        function getExchange(address token) external view returns (address exchange);
-    }
-}
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
@@ -53,6 +30,19 @@ pub struct TokenConfig {
 pub struct TokenInfo {
     pub address: Address,
     pub symbol: String,
+}
+
+impl TokenInfo {
+    pub fn from_address(addr: Address, symbols: &HashMap<Address, String>) -> Self {
+        let symbol = symbols
+            .get(&addr)
+            .cloned()
+            .unwrap_or_else(|| addr.to_string());
+        Self {
+            address: addr,
+            symbol,
+        }
+    }
 }
 
 impl TokenConfig {

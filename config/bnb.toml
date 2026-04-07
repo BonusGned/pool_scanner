@@ -52,11 +52,6 @@ symbol = "ZAMA"
 decimals = 18
 
 [[tokens]]
-address = "0x6907A5986C4950Bdaf2F81828Ec0737ce787519f"
-symbol = "ZAMA"
-decimals = 18
-
-[[tokens]]
 address = "0x011ebe7d75e2c9d1e0bd0be0bef5c36f0a90075f"
 symbol = "STABLE"
 decimals = 18
