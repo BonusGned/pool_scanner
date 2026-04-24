@@ -21,7 +21,6 @@ fn test_load_eth_config_from_file() {
 
     assert!(!config.rpc_url.is_empty());
     assert!(config.rpc_url.starts_with("http"));
-    assert_ne!(config.multicall3_address, Address::ZERO);
     assert!(config.tokens.len() >= 3);
     assert!(!config.factories.is_empty());
     assert!(config
@@ -33,7 +32,7 @@ fn test_load_eth_config_from_file() {
         .iter()
         .any(|f| f.factory_type == PoolTypeConfig::V3));
 
-    let liq = liquidity_tokens(&config.tokens);
+    let liq = liquidity_tokens(&config.tokens).unwrap();
     assert!(liq.len() >= 2);
 }
 
@@ -47,7 +46,7 @@ fn test_load_bnb_config_from_file() {
     assert!(config.tokens.len() >= 3);
     assert!(config.factories.len() >= 3);
 
-    let liq = liquidity_tokens(&config.tokens);
+    let liq = liquidity_tokens(&config.tokens).unwrap();
     assert!(liq.len() >= 2);
     for (_, min_liq) in &liq {
         assert!(*min_liq > U256::ZERO);
@@ -90,7 +89,7 @@ fn test_end_to_end_pool_processing() {
     let pairs = generate_pairs(&tokens);
     assert_eq!(pairs.len(), 3);
 
-    let liq = liquidity_tokens(&tokens);
+    let liq = liquidity_tokens(&tokens).unwrap();
     assert_eq!(liq.len(), 3);
 
     let pool1 = address!("0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640");
@@ -178,7 +177,7 @@ fn test_per_token_liquidity_thresholds() {
         ),
     ];
 
-    let liq = liquidity_tokens(&tokens);
+    let liq = liquidity_tokens(&tokens).unwrap();
     assert_eq!(liq.len(), 3);
     assert_eq!(liq[0].1, U256::from(50_000_000_000u64));
     assert_eq!(liq[1].1, U256::from(100_000_000u64));

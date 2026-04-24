@@ -46,74 +46,43 @@ impl TokenInfo {
 }
 
 impl TokenConfig {
-    pub fn min_liquidity_u256(&self) -> Option<U256> {
-        let value = self.min_liquidity.as_ref()?;
-        let decimals = self.decimals.unwrap_or(18);
-
-        Some(
-            parse_normalized_amount(value, decimals)
-                .unwrap_or_else(|err| panic!("Invalid min_liquidity for {}: {}", self.symbol, err)),
-        )
+    pub fn min_liquidity_u256(&self) -> Result<Option<U256>, String> {
+        let Some(value) = self.min_liquidity.as_ref() else {
+            return Ok(None);
+        };
+        parse_normalized_amount(value, self.decimals.unwrap_or(18))
+            .map(Some)
+            .map_err(|e| format!("Invalid min_liquidity for {}: {}", self.symbol, e))
     }
 }
 
 fn parse_normalized_amount(value: &str, decimals: u8) -> Result<U256, String> {
-    let value = value.trim();
-    if value.is_empty() {
-        return Err("empty amount".to_string());
+    let value = value.trim().replace('_', "");
+    if value.is_empty() || value == "." {
+        return Err("empty amount".into());
     }
     if value.starts_with('-') {
-        return Err("negative amount".to_string());
+        return Err("negative amount".into());
     }
 
-    let mut parts = value.split('.');
-    let whole_raw = parts.next().unwrap_or("");
-    let frac_raw = parts.next().unwrap_or("");
-    if parts.next().is_some() {
-        return Err("invalid amount format".to_string());
+    let (whole, frac) = value.split_once('.').unwrap_or((value.as_str(), ""));
+    if frac.contains('.') {
+        return Err("invalid amount format".into());
     }
 
-    let whole = clean_digits(whole_raw)?;
-    let frac = clean_digits(frac_raw)?;
-
-    if whole.is_empty() && frac.is_empty() {
-        return Err("empty amount".to_string());
+    let dec = decimals as usize;
+    if frac.len() > dec {
+        return Err(format!("too many decimal places: {} > {}", frac.len(), dec));
     }
 
-    if frac.len() > decimals as usize {
-        return Err(format!(
-            "too many decimal places: {} > {}",
-            frac.len(),
-            decimals
-        ));
+    let mut buf = String::with_capacity(whole.len().max(1) + dec);
+    buf.push_str(if whole.is_empty() { "0" } else { whole });
+    buf.push_str(frac);
+    for _ in 0..(dec - frac.len()) {
+        buf.push('0');
     }
 
-    let mut combined = String::with_capacity(whole.len() + decimals as usize);
-    combined.push_str(if whole.is_empty() { "0" } else { &whole });
-    combined.push_str(&frac);
-    combined.push_str(&"0".repeat(decimals as usize - frac.len()));
-
-    combined
-        .parse::<U256>()
-        .map_err(|_| "invalid digits after normalization".to_string())
-}
-
-fn clean_digits(input: &str) -> Result<String, String> {
-    if input.is_empty() {
-        return Ok(String::new());
-    }
-
-    let mut out = String::with_capacity(input.len());
-    for ch in input.chars() {
-        if ch == '_' {
-            continue;
-        }
-        if !ch.is_ascii_digit() {
-            return Err(format!("invalid character '{}'", ch));
-        }
-        out.push(ch);
-    }
-    Ok(out)
+    U256::from_str_radix(&buf, 10).map_err(|e| e.to_string())
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -127,7 +96,8 @@ pub struct FactoryConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ScannerConfig {
     pub rpc_url: String,
-    pub multicall3_address: Address,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub multicall3_address: Option<Address>,
     pub tokens: Vec<TokenConfig>,
     pub factories: Vec<FactoryConfig>,
 }
@@ -155,19 +125,25 @@ pub struct Output {
 }
 
 pub fn generate_pairs(tokens: &[TokenConfig]) -> Vec<(Address, Address)> {
-    let mut pairs = Vec::new();
-    for i in 0..tokens.len() {
-        for j in (i + 1)..tokens.len() {
-            pairs.push((tokens[i].address, tokens[j].address));
+    let n = tokens.len();
+    let mut pairs = Vec::with_capacity(n * n.saturating_sub(1) / 2);
+    for (i, ti) in tokens.iter().enumerate() {
+        for tj in tokens.iter().skip(i + 1) {
+            let (a, b) = (ti.address, tj.address);
+            pairs.push(if a < b { (a, b) } else { (b, a) });
         }
     }
     pairs
 }
 
-pub fn liquidity_tokens(tokens: &[TokenConfig]) -> Vec<(Address, U256)> {
+pub fn liquidity_tokens(tokens: &[TokenConfig]) -> Result<Vec<(Address, U256)>, String> {
     tokens
         .iter()
-        .filter_map(|t| t.min_liquidity_u256().map(|liq| (t.address, liq)))
+        .filter_map(|t| {
+            t.min_liquidity_u256()
+                .transpose()
+                .map(|r| r.map(|v| (t.address, v)))
+        })
         .collect()
 }
 
@@ -240,7 +216,7 @@ mod tests {
             assert_eq!(config.factories[0].name, "UniswapV2");
             assert_eq!(config.factories[1].factory_type, PoolTypeConfig::V3);
 
-            let liq = liquidity_tokens(&config.tokens);
+            let liq = liquidity_tokens(&config.tokens).unwrap();
             assert_eq!(liq.len(), 2);
         }
 
@@ -355,24 +331,27 @@ mod tests {
         fn test_token_config_min_liquidity_parsing() {
             let t = token(Address::ZERO, "USDT", Some("50000"), Some(18));
             assert_eq!(
-                t.min_liquidity_u256().unwrap(),
+                t.min_liquidity_u256().unwrap().unwrap(),
                 U256::from(50_000_000_000_000_000_000_000u128)
             );
 
             let t_fraction = token(Address::ZERO, "USDC", Some("0.5"), Some(6));
             assert_eq!(
-                t_fraction.min_liquidity_u256().unwrap(),
+                t_fraction.min_liquidity_u256().unwrap().unwrap(),
                 U256::from(500_000u64)
             );
 
             let t_default = token(Address::ZERO, "DAI", Some("1"), None);
             assert_eq!(
-                t_default.min_liquidity_u256().unwrap(),
+                t_default.min_liquidity_u256().unwrap().unwrap(),
                 U256::from(1_000_000_000_000_000_000u128)
             );
 
             let t_none = token(Address::ZERO, "WBNB", None, None);
-            assert!(t_none.min_liquidity_u256().is_none());
+            assert!(t_none.min_liquidity_u256().unwrap().is_none());
+
+            let t_bad = token(Address::ZERO, "BAD", Some("1.2.3"), Some(18));
+            assert!(t_bad.min_liquidity_u256().is_err());
         }
     }
 
@@ -404,11 +383,15 @@ mod tests {
 
             let pairs = generate_pairs(&tokens);
 
-            // 3 choose 2 = 3 unique pairs
+            // 3 choose 2 = 3 unique pairs; returned in sorted (lower, higher) order
             assert_eq!(pairs.len(), 3);
-            assert!(pairs.contains(&(tokens[0].address, tokens[1].address)));
-            assert!(pairs.contains(&(tokens[0].address, tokens[2].address)));
-            assert!(pairs.contains(&(tokens[1].address, tokens[2].address)));
+            let sorted_pair = |a: Address, b: Address| if a < b { (a, b) } else { (b, a) };
+            assert!(pairs.contains(&sorted_pair(tokens[0].address, tokens[1].address)));
+            assert!(pairs.contains(&sorted_pair(tokens[0].address, tokens[2].address)));
+            assert!(pairs.contains(&sorted_pair(tokens[1].address, tokens[2].address)));
+            for (a, b) in &pairs {
+                assert!(a < b);
+            }
         }
 
         #[test]
@@ -519,7 +502,7 @@ mod tests {
                 ),
             ];
 
-            let liq = liquidity_tokens(&tokens);
+            let liq = liquidity_tokens(&tokens).unwrap();
             assert_eq!(liq.len(), 2);
             assert_eq!(liq[0].0, tokens[0].address);
             assert_eq!(liq[0].1, U256::from(50_000_000_000u64));
@@ -533,7 +516,7 @@ mod tests {
                 token(Address::ZERO, "A", None, None),
                 token(Address::ZERO, "B", None, None),
             ];
-            assert!(liquidity_tokens(&tokens).is_empty());
+            assert!(liquidity_tokens(&tokens).unwrap().is_empty());
         }
     }
 
